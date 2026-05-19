@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+:root {
+  --pine: #2d4a3e;
+  --bark: #5c3d2e;
+  --stone: #8c7b6b;
+  --snow: #f5f2ee;
+  --charcoal: #1e1e1e;
+  --ash: #3a3a3a;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--snow);
+  color: var(--charcoal);
+}
