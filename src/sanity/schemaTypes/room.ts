@@ -10,9 +10,25 @@ export const roomType = defineType({
     defineField({ name: "order", title: "Display Order", type: "number", description: "Controls order on home page (1 = first)" }),
     defineField({ name: "description", title: "Description", type: "text", rows: 3 }),
     defineField({
+      name: "images",
+      title: "Images",
+      type: "array",
+      of: [
+        defineField({
+          name: "imageItem",
+          title: "Image",
+          type: "object",
+          fields: [
+            defineField({ name: "image", title: "Image", type: "image", options: { hotspot: true } }),
+            defineField({ name: "caption", title: "Caption", type: "string" }),
+          ],
+        }),
+      ],
+    }),
+    defineField({
       name: "sections",
       title: "Sections",
-      description: 'Add sections like "Current State", "Concepts", "Materials" etc.',
+      description: 'Add named sections like "Current State", "Concepts", "Materials" etc.',
       type: "array",
       of: [
         defineField({
@@ -20,7 +36,7 @@ export const roomType = defineType({
           title: "Section",
           type: "object",
           fields: [
-            defineField({ name: "title", title: "Section Title", type: "string", description: 'e.g. "Current State", "Concepts"', validation: (r) => r.required() }),
+            defineField({ name: "title", title: "Section Title", type: "string", validation: (r) => r.required() }),
             defineField({ name: "description", title: "Section Notes", type: "text", rows: 2 }),
             defineField({
               name: "images",

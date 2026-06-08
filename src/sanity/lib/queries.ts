@@ -6,8 +6,9 @@ export const allRoomsQuery = groq`
     title,
     "slug": slug.current,
     description,
-    "coverImage": sections[0].images[0].image,
-    "imageCount": count(sections[].images[]),
+    "coverImage": coalesce(images[0].image, sections[0].images[0].image),
+    "imageCount": count(images[]) + count(sections[].images[]),
+    "images": images[] { caption, "image": image },
     "sections": sections[] {
       title,
       description,
@@ -23,6 +24,7 @@ export const roomBySlugQuery = groq`
     title,
     "slug": slug.current,
     description,
+    "images": images[] { caption, "image": image },
     "sections": sections[] {
       title,
       description,

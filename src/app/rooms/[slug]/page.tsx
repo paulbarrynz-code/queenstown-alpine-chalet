@@ -36,6 +36,10 @@ export default async function RoomPage({ params }: { params: Promise<{ slug: str
   const prev = allRooms[currentIndex - 1];
   const next = allRooms[currentIndex + 1];
 
+  const hasImages = room.images && room.images.length > 0;
+  const hasSections = room.sections && room.sections.length > 0;
+  const isEmpty = !hasImages && !hasSections;
+
   return (
     <div className="max-w-6xl mx-auto px-6 py-12">
       {/* Breadcrumb */}
@@ -47,10 +51,7 @@ export default async function RoomPage({ params }: { params: Promise<{ slug: str
 
       {/* Room header */}
       <div className="mb-10 border-b pb-8" style={{ borderColor: "#ddd5c8" }}>
-        <h1
-          className="text-3xl md:text-4xl font-semibold mb-4"
-          style={{ fontFamily: "Georgia, serif", color: "var(--bark)" }}
-        >
+        <h1 className="text-3xl md:text-4xl font-semibold mb-4" style={{ fontFamily: "Georgia, serif", color: "var(--bark)" }}>
           {room.title}
         </h1>
         {room.description && (
@@ -60,16 +61,22 @@ export default async function RoomPage({ params }: { params: Promise<{ slug: str
         )}
       </div>
 
-      {/* Sections */}
-      {room.sections && room.sections.length > 0 ? (
-        <div className="space-y-16">
-          {room.sections.map((section, i) => (
+      {isEmpty && (
+        <p className="text-sm py-10 text-center" style={{ color: "var(--stone)" }}>
+          No content added yet.
+        </p>
+      )}
+
+      {/* Top-level images (original upload) */}
+      {hasImages && <Gallery images={room.images!} />}
+
+      {/* Named sections */}
+      {hasSections && (
+        <div className={`space-y-16 ${hasImages ? "mt-16" : ""}`}>
+          {room.sections!.map((section, i) => (
             <section key={i}>
-              <div className="mb-6">
-                <h2
-                  className="text-xl font-semibold"
-                  style={{ fontFamily: "Georgia, serif", color: "var(--bark)" }}
-                >
+              <div className="mb-6 border-b pb-4" style={{ borderColor: "#ddd5c8" }}>
+                <h2 className="text-xl font-semibold" style={{ fontFamily: "Georgia, serif", color: "var(--bark)" }}>
                   {section.title}
                 </h2>
                 {section.description && (
@@ -78,31 +85,19 @@ export default async function RoomPage({ params }: { params: Promise<{ slug: str
                   </p>
                 )}
               </div>
-
-              {section.images && section.images.length > 0 && (
-                <Gallery images={section.images} />
-              )}
-
+              {section.images && section.images.length > 0 && <Gallery images={section.images} />}
               {section.documents && section.documents.length > 0 && (
-                <div className="mt-6">
-                  <DocumentList documents={section.documents} />
-                </div>
+                <div className="mt-6"><DocumentList documents={section.documents} /></div>
               )}
             </section>
           ))}
         </div>
-      ) : (
-        <p className="text-sm py-10 text-center" style={{ color: "var(--stone)" }}>
-          No content added yet.
-        </p>
       )}
 
       {/* Prev / Next */}
       <div className="mt-14 pt-8 border-t flex justify-between" style={{ borderColor: "#ddd5c8" }}>
         {prev ? (
-          <Link href={`/rooms/${prev.slug}`} className="text-sm hover:underline" style={{ color: "var(--pine)" }}>
-            ← {prev.title}
-          </Link>
+          <Link href={`/rooms/${prev.slug}`} className="text-sm hover:underline" style={{ color: "var(--pine)" }}>← {prev.title}</Link>
         ) : <span />}
         {next ? (
           <Link href={`/rooms/${next.slug}`} className="text-sm hover:underline" style={{ color: "var(--pine)" }}>
