@@ -31,7 +31,7 @@ export default function Header({ rooms }: { rooms: SanityRoom[] }) {
       </div>
 
       {open && (
-        <nav className="md:hidden border-t px-6 py-4 flex flex-col gap-3 text-sm" style={{ borderColor: "#2a1608", backgroundColor: "#2a1608" }}>
+        <nav className="md:hidden border-t px-6 py-4 flex flex-col gap-3 text-sm" style={{ borderColor: "#5c3018", backgroundColor: "#5c3018" }}>
           {rooms.map((room) => (
             <Link key={room.slug} href={`/rooms/${room.slug}`} onClick={() => setOpen(false)} className="hover:opacity-70 transition-opacity" style={{ color: "var(--snow)" }}>
               {room.title}
