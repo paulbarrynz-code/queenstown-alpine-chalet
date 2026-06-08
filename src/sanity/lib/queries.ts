@@ -39,3 +39,10 @@ export const roomBySlugQuery = groq`
 export const allRoomSlugsQuery = groq`
   *[_type == "room"] { "slug": slug.current }
 `;
+
+export const siteSettingsQuery = groq`
+  *[_type == "siteSettings" && _id == "siteSettings"][0] {
+    "heroImage": heroImage,
+    heroOverlayOpacity
+  }
+`;

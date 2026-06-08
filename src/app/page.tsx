@@ -1,33 +1,62 @@
+import Image from "next/image";
 import { client } from "@/sanity/lib/client";
-import { allRoomsQuery } from "@/sanity/lib/queries";
+import { allRoomsQuery, siteSettingsQuery } from "@/sanity/lib/queries";
+import { urlFor } from "@/sanity/lib/image";
 import RoomCard from "@/components/RoomCard";
 import type { SanityRoom } from "@/types/sanity";
 
 export const revalidate = 60;
 
+type SiteSettings = {
+  heroImage?: unknown;
+  heroOverlayOpacity?: number;
+};
+
 export default async function HomePage() {
-  const rooms: SanityRoom[] = await client.fetch(allRoomsQuery);
+  const [rooms, settings]: [SanityRoom[], SiteSettings] = await Promise.all([
+    client.fetch(allRoomsQuery),
+    client.fetch(siteSettingsQuery).catch(() => ({})),
+  ]);
+
+  const heroImageUrl = settings?.heroImage
+    ? urlFor(settings.heroImage).width(1920).height(800).fit("crop").url()
+    : null;
+
+  const overlayOpacity = ((settings?.heroOverlayOpacity ?? 50) / 100).toFixed(2);
 
   return (
     <>
       {/* Hero */}
-      <section
-        className="py-20 px-6 text-center"
-        style={{ backgroundColor: "var(--pine)", color: "var(--snow)" }}
-      >
-        <p className="text-xs tracking-[0.3em] uppercase mb-3" style={{ color: "var(--stone)" }}>
-          Queenstown, New Zealand
-        </p>
-        <h1
-          className="text-4xl md:text-5xl font-semibold leading-tight mb-4"
-          style={{ fontFamily: "Georgia, serif" }}
-        >
-          Alpine Chalet
-        </h1>
-        <p className="max-w-xl mx-auto text-sm leading-relaxed" style={{ color: "#c8bfb5" }}>
-          A curated collection of design concepts for our Queenstown renovation.
-          Browse each space below to explore materials, finishes, and styling directions.
-        </p>
+      <section className="relative py-28 px-6 text-center overflow-hidden" style={{ minHeight: "320px", backgroundColor: "var(--pine)" }}>
+        {/* Background image */}
+        {heroImageUrl && (
+          <Image
+            src={heroImageUrl}
+            alt="Queenstown Alpine Chalet"
+            fill
+            className="object-cover"
+            priority
+            sizes="100vw"
+          />
+        )}
+        {/* Overlay */}
+        <div
+          className="absolute inset-0"
+          style={{ backgroundColor: `rgba(30, 45, 35, ${overlayOpacity})` }}
+        />
+        {/* Text */}
+        <div className="relative z-10">
+          <p className="text-xs tracking-[0.3em] uppercase mb-3" style={{ color: heroImageUrl ? "#d4c9bb" : "var(--stone)" }}>
+            Queenstown, New Zealand
+          </p>
+          <h1 className="text-4xl md:text-5xl font-semibold leading-tight mb-4 text-white" style={{ fontFamily: "Georgia, serif" }}>
+            Alpine Chalet
+          </h1>
+          <p className="max-w-xl mx-auto text-sm leading-relaxed" style={{ color: "#c8bfb5" }}>
+            A curated collection of design concepts for our Queenstown renovation.
+            Browse each space below to explore materials, finishes, and styling directions.
+          </p>
+        </div>
       </section>
 
       <div className="h-1" style={{ backgroundColor: "var(--bark)" }} />
@@ -39,11 +68,7 @@ export default async function HomePage() {
         </h2>
         {rooms.length === 0 ? (
           <p className="text-sm" style={{ color: "var(--stone)" }}>
-            No rooms added yet. Visit{" "}
-            <a href="/studio" className="underline">
-              /studio
-            </a>{" "}
-            to add content.
+            No rooms added yet. Visit <a href="/studio" className="underline">/studio</a> to add content.
           </p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

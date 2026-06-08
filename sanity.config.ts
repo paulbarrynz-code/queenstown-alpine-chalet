@@ -8,9 +8,26 @@ export default defineConfig({
   title: "Queenstown Alpine Chalet",
   projectId: "k8pon0cl",
   dataset: "production",
-  plugins: [structureTool(), visionTool()],
-  schema: {
-    types: schemaTypes,
-  },
+  plugins: [
+    structureTool({
+      structure: (S) =>
+        S.list()
+          .title("Content")
+          .items([
+            S.listItem()
+              .title("Site Settings")
+              .id("siteSettings")
+              .child(
+                S.document()
+                  .schemaType("siteSettings")
+                  .documentId("siteSettings")
+              ),
+            S.divider(),
+            S.documentTypeListItem("room").title("Rooms"),
+          ]),
+    }),
+    visionTool(),
+  ],
+  schema: { types: schemaTypes },
   basePath: "/studio",
 });
