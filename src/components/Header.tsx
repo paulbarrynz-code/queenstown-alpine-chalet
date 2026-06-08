@@ -2,18 +2,9 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import type { SanityRoom } from "@/types/sanity";
 
-const NAV_ROOMS = [
-  { slug: "lounge", title: "Lounge" },
-  { slug: "kitchen", title: "Kitchen" },
-  { slug: "master-bedroom", title: "Master Bedroom" },
-  { slug: "rumpus", title: "Rumpus" },
-  { slug: "bedroom-3", title: "Bedroom 3" },
-  { slug: "bathroom", title: "Bathroom" },
-  { slug: "outdoor", title: "Outdoor" },
-];
-
-export default function Header() {
+export default function Header({ rooms }: { rooms: SanityRoom[] }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -25,7 +16,7 @@ export default function Header() {
         </Link>
 
         <nav className="hidden md:flex gap-6 text-sm tracking-wide">
-          {NAV_ROOMS.map((room) => (
+          {rooms.map((room) => (
             <Link key={room.slug} href={`/rooms/${room.slug}`} className="hover:opacity-70 transition-opacity" style={{ color: "var(--snow)" }}>
               {room.title}
             </Link>
@@ -41,7 +32,7 @@ export default function Header() {
 
       {open && (
         <nav className="md:hidden border-t px-6 py-4 flex flex-col gap-3 text-sm" style={{ borderColor: "var(--ash)", backgroundColor: "var(--ash)" }}>
-          {NAV_ROOMS.map((room) => (
+          {rooms.map((room) => (
             <Link key={room.slug} href={`/rooms/${room.slug}`} onClick={() => setOpen(false)} className="hover:opacity-70 transition-opacity" style={{ color: "var(--snow)" }}>
               {room.title}
             </Link>
