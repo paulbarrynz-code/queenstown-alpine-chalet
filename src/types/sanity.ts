@@ -27,5 +27,6 @@ export type SanityRoom = {
   coverImage?: SanityImageSource;
   imageCount?: number;
   images?: SanityRoomImage[];
+  documents?: SanityDocument[];
   sections?: SanitySection[];
 };

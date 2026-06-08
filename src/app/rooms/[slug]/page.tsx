@@ -37,8 +37,9 @@ export default async function RoomPage({ params }: { params: Promise<{ slug: str
   const next = allRooms[currentIndex + 1];
 
   const hasImages = room.images && room.images.length > 0;
+  const hasDocuments = room.documents && room.documents.length > 0;
   const hasSections = room.sections && room.sections.length > 0;
-  const isEmpty = !hasImages && !hasSections;
+  const isEmpty = !hasImages && !hasDocuments && !hasSections;
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-12">
@@ -67,8 +68,18 @@ export default async function RoomPage({ params }: { params: Promise<{ slug: str
         </p>
       )}
 
-      {/* Top-level images (original upload) */}
+      {/* Top-level images */}
       {hasImages && <Gallery images={room.images!} />}
+
+      {/* Top-level documents */}
+      {hasDocuments && (
+        <div className={hasImages ? "mt-10" : ""}>
+          <h2 className="text-xs tracking-[0.25em] uppercase mb-5" style={{ color: "var(--stone)" }}>
+            Documents & Plans
+          </h2>
+          <DocumentList documents={room.documents!} />
+        </div>
+      )}
 
       {/* Named sections */}
       {hasSections && (

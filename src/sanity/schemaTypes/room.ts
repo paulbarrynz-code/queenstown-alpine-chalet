@@ -26,6 +26,38 @@ export const roomType = defineType({
       ],
     }),
     defineField({
+      name: "documents",
+      title: "Documents",
+      description: "Top-level documents — floor plans, site plans, property information etc.",
+      type: "array",
+      of: [
+        defineField({
+          name: "documentItem",
+          title: "Document",
+          type: "object",
+          fields: [
+            defineField({ name: "title", title: "Title", type: "string", validation: (r) => r.required() }),
+            defineField({ name: "file", title: "File", type: "file" }),
+            defineField({
+              name: "category",
+              title: "Category",
+              type: "string",
+              options: {
+                list: [
+                  { title: "Floor Plan", value: "floor-plan" },
+                  { title: "Site Plan", value: "site-plan" },
+                  { title: "Concept", value: "concept" },
+                  { title: "Specification", value: "specification" },
+                  { title: "Mood Board", value: "mood-board" },
+                  { title: "Other", value: "other" },
+                ],
+              },
+            }),
+          ],
+        }),
+      ],
+    }),
+    defineField({
       name: "sections",
       title: "Sections",
       description: 'Add named sections like "Current State", "Concepts", "Materials" etc.',
