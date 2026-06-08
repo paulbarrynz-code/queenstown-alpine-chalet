@@ -31,9 +31,6 @@ export default function RoomCard({ room }: { room: SanityRoom }) {
         <h2 className="text-base font-semibold tracking-wide" style={{ fontFamily: "Georgia, serif", color: "var(--bark)" }}>
           {room.title}
         </h2>
-        <p className="mt-1 text-xs" style={{ color: "var(--stone)" }}>
-          {imageCount === 0 ? "Images coming soon" : `${imageCount} image${imageCount !== 1 ? "s" : ""}`}
-        </p>
       </div>
     </Link>
   );
