@@ -12,11 +12,19 @@ export type SanityDocument = {
   url?: string;
 };
 
+export type SanitySection = {
+  title: string;
+  description?: string;
+  images?: SanityRoomImage[];
+  documents?: SanityDocument[];
+};
+
 export type SanityRoom = {
   _id: string;
   title: string;
   slug: string;
   description?: string;
-  images?: SanityRoomImage[];
-  documents?: SanityDocument[];
+  coverImage?: SanityImageSource;
+  imageCount?: number;
+  sections?: SanitySection[];
 };

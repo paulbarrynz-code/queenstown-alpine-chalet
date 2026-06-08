@@ -4,8 +4,7 @@ import { urlFor } from "@/sanity/lib/image";
 import type { SanityRoom } from "@/types/sanity";
 
 export default function RoomCard({ room }: { room: SanityRoom }) {
-  const firstImage = room.images?.[0];
-  const imageCount = room.images?.length ?? 0;
+  const imageCount = room.imageCount ?? 0;
 
   return (
     <Link
@@ -14,16 +13,16 @@ export default function RoomCard({ room }: { room: SanityRoom }) {
       style={{ backgroundColor: "#fff" }}
     >
       <div className="relative w-full aspect-[4/3] overflow-hidden" style={{ backgroundColor: "var(--stone)" }}>
-        {firstImage ? (
+        {room.coverImage ? (
           <Image
-            src={urlFor(firstImage.image).width(800).height(600).fit("crop").url()}
-            alt={firstImage.caption ?? room.title}
+            src={urlFor(room.coverImage).width(800).height(600).fit("crop").url()}
+            alt={room.title}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-500"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full gap-2 text-white opacity-60">
+          <div className="flex items-center justify-center h-full text-white opacity-60">
             <span className="text-xs tracking-widest uppercase">Coming soon</span>
           </div>
         )}

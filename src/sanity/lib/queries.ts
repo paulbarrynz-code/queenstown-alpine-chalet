@@ -6,14 +6,13 @@ export const allRoomsQuery = groq`
     title,
     "slug": slug.current,
     description,
-    "images": images[] {
-      caption,
-      "image": image
-    },
-    "documents": documents[] {
+    "coverImage": sections[0].images[0].image,
+    "imageCount": count(sections[].images[]),
+    "sections": sections[] {
       title,
-      category,
-      "url": file.asset->url
+      description,
+      "images": images[] { caption, "image": image },
+      "documents": documents[] { title, category, "url": file.asset->url }
     }
   }
 `;
@@ -24,14 +23,11 @@ export const roomBySlugQuery = groq`
     title,
     "slug": slug.current,
     description,
-    "images": images[] {
-      caption,
-      "image": image
-    },
-    "documents": documents[] {
+    "sections": sections[] {
       title,
-      category,
-      "url": file.asset->url
+      description,
+      "images": images[] { caption, "image": image },
+      "documents": documents[] { title, category, "url": file.asset->url }
     }
   }
 `;

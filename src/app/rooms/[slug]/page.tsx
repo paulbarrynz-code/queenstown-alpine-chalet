@@ -60,20 +60,41 @@ export default async function RoomPage({ params }: { params: Promise<{ slug: str
         )}
       </div>
 
-      {/* Image gallery */}
-      <Gallery images={room.images ?? []} />
+      {/* Sections */}
+      {room.sections && room.sections.length > 0 ? (
+        <div className="space-y-16">
+          {room.sections.map((section, i) => (
+            <section key={i}>
+              <div className="mb-6">
+                <h2
+                  className="text-xl font-semibold"
+                  style={{ fontFamily: "Georgia, serif", color: "var(--bark)" }}
+                >
+                  {section.title}
+                </h2>
+                {section.description && (
+                  <p className="mt-2 text-sm leading-relaxed max-w-2xl" style={{ color: "var(--ash)" }}>
+                    {section.description}
+                  </p>
+                )}
+              </div>
 
-      {/* Documents */}
-      {room.documents && room.documents.length > 0 && (
-        <div className="mt-12">
-          <h2
-            className="text-xs tracking-[0.25em] uppercase mb-5"
-            style={{ color: "var(--stone)" }}
-          >
-            Documents & Plans
-          </h2>
-          <DocumentList documents={room.documents} />
+              {section.images && section.images.length > 0 && (
+                <Gallery images={section.images} />
+              )}
+
+              {section.documents && section.documents.length > 0 && (
+                <div className="mt-6">
+                  <DocumentList documents={section.documents} />
+                </div>
+              )}
+            </section>
+          ))}
         </div>
+      ) : (
+        <p className="text-sm py-10 text-center" style={{ color: "var(--stone)" }}>
+          No content added yet.
+        </p>
       )}
 
       {/* Prev / Next */}
