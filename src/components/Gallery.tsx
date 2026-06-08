@@ -2,23 +2,16 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import type { RoomImage } from "@/data/rooms";
+import { urlFor } from "@/sanity/lib/image";
+import type { SanityRoomImage } from "@/types/sanity";
 import Lightbox from "./Lightbox";
 
-type Props = {
-  images: RoomImage[];
-  roomSlug: string;
-};
-
-export default function Gallery({ images, roomSlug }: Props) {
+export default function Gallery({ images }: { images: SanityRoomImage[] }) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   if (images.length === 0) {
     return (
-      <div
-        className="text-center py-20 text-sm tracking-widest uppercase"
-        style={{ color: "var(--stone)" }}
-      >
+      <div className="text-center py-20 text-sm tracking-widest uppercase" style={{ color: "var(--stone)" }}>
         Images coming soon
       </div>
     );
@@ -31,13 +24,13 @@ export default function Gallery({ images, roomSlug }: Props) {
           <button
             key={i}
             onClick={() => setLightboxIndex(i)}
-            className="group relative aspect-[4/3] overflow-hidden rounded-sm shadow-sm hover:shadow-md transition-shadow duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2"
+            className="group relative aspect-[4/3] overflow-hidden rounded-sm shadow-sm hover:shadow-md transition-shadow duration-300 focus:outline-none"
             style={{ backgroundColor: "var(--stone)" }}
             aria-label={img.caption ?? `Image ${i + 1}`}
           >
             <Image
-              src={`/images/${roomSlug}/${img.src}`}
-              alt={img.caption ?? `${roomSlug} image ${i + 1}`}
+              src={urlFor(img.image).width(800).height(600).fit("crop").url()}
+              alt={img.caption ?? `Image ${i + 1}`}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-500"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -57,7 +50,6 @@ export default function Gallery({ images, roomSlug }: Props) {
       {lightboxIndex !== null && (
         <Lightbox
           images={images}
-          roomSlug={roomSlug}
           index={lightboxIndex}
           onClose={() => setLightboxIndex(null)}
           onPrev={() => setLightboxIndex((i) => Math.max(0, (i ?? 0) - 1))}

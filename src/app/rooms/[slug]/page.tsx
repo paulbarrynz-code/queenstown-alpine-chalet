@@ -1,15 +1,21 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { rooms, getRoomBySlug } from "@/data/rooms";
+import { client } from "@/sanity/lib/client";
+import { roomBySlugQuery, allRoomsQuery, allRoomSlugsQuery } from "@/sanity/lib/queries";
 import Gallery from "@/components/Gallery";
+import DocumentList from "@/components/DocumentList";
+import type { SanityRoom } from "@/types/sanity";
 
-export function generateStaticParams() {
-  return rooms.map((room) => ({ slug: room.slug }));
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const slugs: { slug: string }[] = await client.fetch(allRoomSlugsQuery);
+  return slugs.map((s) => ({ slug: s.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const room = getRoomBySlug(slug);
+  const room: SanityRoom = await client.fetch(roomBySlugQuery, { slug });
   if (!room) return {};
   return {
     title: `${room.title} — Queenstown Alpine Chalet`,
@@ -19,12 +25,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function RoomPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const room = getRoomBySlug(slug);
+  const [room, allRooms]: [SanityRoom, SanityRoom[]] = await Promise.all([
+    client.fetch(roomBySlugQuery, { slug }),
+    client.fetch(allRoomsQuery),
+  ]);
+
   if (!room) notFound();
 
-  const currentIndex = rooms.findIndex((r) => r.slug === slug);
-  const prev = rooms[currentIndex - 1];
-  const next = rooms[currentIndex + 1];
+  const currentIndex = allRooms.findIndex((r) => r.slug === slug);
+  const prev = allRooms[currentIndex - 1];
+  const next = allRooms[currentIndex + 1];
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-12">
@@ -43,38 +53,41 @@ export default async function RoomPage({ params }: { params: Promise<{ slug: str
         >
           {room.title}
         </h1>
-        <p className="max-w-2xl text-sm leading-relaxed" style={{ color: "var(--ash)" }}>
-          {room.description}
-        </p>
+        {room.description && (
+          <p className="max-w-2xl text-sm leading-relaxed" style={{ color: "var(--ash)" }}>
+            {room.description}
+          </p>
+        )}
       </div>
 
-      {/* Gallery */}
-      <Gallery images={room.images} roomSlug={room.slug} />
+      {/* Image gallery */}
+      <Gallery images={room.images ?? []} />
 
-      {/* Prev / Next navigation */}
+      {/* Documents */}
+      {room.documents && room.documents.length > 0 && (
+        <div className="mt-12">
+          <h2
+            className="text-xs tracking-[0.25em] uppercase mb-5"
+            style={{ color: "var(--stone)" }}
+          >
+            Documents & Plans
+          </h2>
+          <DocumentList documents={room.documents} />
+        </div>
+      )}
+
+      {/* Prev / Next */}
       <div className="mt-14 pt-8 border-t flex justify-between" style={{ borderColor: "#ddd5c8" }}>
         {prev ? (
-          <Link
-            href={`/rooms/${prev.slug}`}
-            className="text-sm hover:underline"
-            style={{ color: "var(--pine)" }}
-          >
+          <Link href={`/rooms/${prev.slug}`} className="text-sm hover:underline" style={{ color: "var(--pine)" }}>
             ← {prev.title}
           </Link>
-        ) : (
-          <span />
-        )}
+        ) : <span />}
         {next ? (
-          <Link
-            href={`/rooms/${next.slug}`}
-            className="text-sm hover:underline"
-            style={{ color: "var(--pine)" }}
-          >
+          <Link href={`/rooms/${next.slug}`} className="text-sm hover:underline" style={{ color: "var(--pine)" }}>
             {next.title} →
           </Link>
-        ) : (
-          <span />
-        )}
+        ) : <span />}
       </div>
     </div>
   );
