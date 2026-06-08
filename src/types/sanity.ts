@@ -45,6 +45,7 @@ export type SanityRoom = {
   title: string;
   slug: string;
   description?: string;
+  navGroup?: string;
   coverImage?: SanityImageSource;
   imageCount?: number;
   images?: SanityRoomImage[];

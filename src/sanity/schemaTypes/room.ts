@@ -8,6 +8,7 @@ export const roomType = defineType({
     defineField({ name: "title", title: "Title", type: "string", validation: (r) => r.required() }),
     defineField({ name: "slug", title: "Slug", type: "slug", options: { source: "title" }, validation: (r) => r.required() }),
     defineField({ name: "order", title: "Display Order", type: "number", description: "Controls order on home page (1 = first)" }),
+    defineField({ name: "navGroup", title: "Navigation Group", type: "string", description: 'Optional. Group this room under a dropdown in the nav, e.g. "Documents"' }),
     defineField({ name: "description", title: "Description", type: "text", rows: 3 }),
     defineField({
       name: "images",
