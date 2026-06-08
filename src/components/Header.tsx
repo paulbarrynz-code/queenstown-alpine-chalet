@@ -8,7 +8,7 @@ export default function Header({ rooms }: { rooms: SanityRoom[] }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <header style={{ backgroundColor: "var(--pine)", color: "var(--snow)" }} className="sticky top-0 z-50 shadow-md">
+    <header style={{ backgroundColor: "var(--header)", color: "var(--snow)" }} className="sticky top-0 z-50 shadow-md">
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex flex-col leading-tight hover:opacity-80 transition-opacity">
           <span className="text-xs tracking-[0.25em] uppercase" style={{ color: "var(--stone)" }}>Queenstown</span>
@@ -31,7 +31,7 @@ export default function Header({ rooms }: { rooms: SanityRoom[] }) {
       </div>
 
       {open && (
-        <nav className="md:hidden border-t px-6 py-4 flex flex-col gap-3 text-sm" style={{ borderColor: "var(--ash)", backgroundColor: "var(--ash)" }}>
+        <nav className="md:hidden border-t px-6 py-4 flex flex-col gap-3 text-sm" style={{ borderColor: "#2a1608", backgroundColor: "#2a1608" }}>
           {rooms.map((room) => (
             <Link key={room.slug} href={`/rooms/${room.slug}`} onClick={() => setOpen(false)} className="hover:opacity-70 transition-opacity" style={{ color: "var(--snow)" }}>
               {room.title}
