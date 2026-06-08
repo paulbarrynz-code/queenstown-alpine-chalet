@@ -62,7 +62,8 @@ export default async function HomePage() {
       <div className="h-1" style={{ backgroundColor: "var(--bark)" }} />
 
       {/* Room grid */}
-      <section className="max-w-6xl mx-auto px-6 py-14">
+      <section className="px-6 py-14" style={{ backgroundColor: "#E8E3D8" }}>
+        <div className="max-w-6xl mx-auto">
         <h2 className="text-xs tracking-[0.25em] uppercase mb-8" style={{ color: "var(--stone)" }}>
           Spaces
         </h2>
@@ -77,6 +78,7 @@ export default async function HomePage() {
             ))}
           </div>
         )}
+        </div>
       </section>
     </>
   );
