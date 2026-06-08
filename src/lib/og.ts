@@ -1,5 +1,5 @@
 type OgData = {
-  image?: string;
+  image?: { url?: string };
 };
 
 export async function fetchOgImage(url: string): Promise<string | null> {
@@ -10,7 +10,7 @@ export async function fetchOgImage(url: string): Promise<string | null> {
     );
     if (!res.ok) return null;
     const data = (await res.json()) as { data?: OgData };
-    return data?.data?.image ?? null;
+    return data?.data?.image?.url ?? null;
   } catch {
     return null;
   }
