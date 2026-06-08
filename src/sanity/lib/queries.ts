@@ -32,7 +32,10 @@ export const roomBySlugQuery = groq`
       description,
       "images": images[] { caption, "image": image },
       "documents": documents[] { title, category, "url": file.asset->url }
-    }
+    },
+    "todos": todos[] { text, completed },
+    "materials": materials[] { name, supplier, finish, notes, url },
+    "links": links[] { title, url, supplier, price, notes }
   }
 `;
 

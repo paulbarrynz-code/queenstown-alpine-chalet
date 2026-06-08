@@ -4,6 +4,9 @@ import { client } from "@/sanity/lib/client";
 import { roomBySlugQuery, allRoomsQuery, allRoomSlugsQuery } from "@/sanity/lib/queries";
 import Gallery from "@/components/Gallery";
 import DocumentList from "@/components/DocumentList";
+import TodoList from "@/components/TodoList";
+import MaterialsList from "@/components/MaterialsList";
+import LinksList from "@/components/LinksList";
 import type { SanityRoom } from "@/types/sanity";
 
 export const revalidate = 60;
@@ -23,6 +26,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
+function SectionHeading({ title }: { title: string }) {
+  return (
+    <h2 className="text-xs tracking-[0.25em] uppercase mb-5" style={{ color: "var(--stone)" }}>
+      {title}
+    </h2>
+  );
+}
+
 export default async function RoomPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const [room, allRooms]: [SanityRoom, SanityRoom[]] = await Promise.all([
@@ -36,10 +47,13 @@ export default async function RoomPage({ params }: { params: Promise<{ slug: str
   const prev = allRooms[currentIndex - 1];
   const next = allRooms[currentIndex + 1];
 
-  const hasImages = room.images && room.images.length > 0;
-  const hasDocuments = room.documents && room.documents.length > 0;
-  const hasSections = room.sections && room.sections.length > 0;
-  const isEmpty = !hasImages && !hasDocuments && !hasSections;
+  const hasImages = (room.images?.length ?? 0) > 0;
+  const hasDocuments = (room.documents?.length ?? 0) > 0;
+  const hasSections = (room.sections?.length ?? 0) > 0;
+  const hasTodos = (room.todos?.length ?? 0) > 0;
+  const hasMaterials = (room.materials?.length ?? 0) > 0;
+  const hasLinks = (room.links?.length ?? 0) > 0;
+  const isEmpty = !hasImages && !hasDocuments && !hasSections && !hasTodos && !hasMaterials && !hasLinks;
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-12">
@@ -63,47 +77,70 @@ export default async function RoomPage({ params }: { params: Promise<{ slug: str
       </div>
 
       {isEmpty && (
-        <p className="text-sm py-10 text-center" style={{ color: "var(--stone)" }}>
-          No content added yet.
-        </p>
+        <p className="text-sm py-10 text-center" style={{ color: "var(--stone)" }}>No content added yet.</p>
       )}
 
-      {/* Top-level images */}
-      {hasImages && <Gallery images={room.images!} />}
+      <div className="space-y-14">
+        {/* Top-level images */}
+        {hasImages && (
+          <div>
+            <SectionHeading title="Photos" />
+            <Gallery images={room.images!} />
+          </div>
+        )}
 
-      {/* Top-level documents */}
-      {hasDocuments && (
-        <div className={hasImages ? "mt-10" : ""}>
-          <h2 className="text-xs tracking-[0.25em] uppercase mb-5" style={{ color: "var(--stone)" }}>
-            Documents & Plans
-          </h2>
-          <DocumentList documents={room.documents!} />
-        </div>
-      )}
-
-      {/* Named sections */}
-      {hasSections && (
-        <div className={`space-y-16 ${hasImages ? "mt-16" : ""}`}>
-          {room.sections!.map((section, i) => (
-            <section key={i}>
-              <div className="mb-6 border-b pb-4" style={{ borderColor: "#ddd5c8" }}>
-                <h2 className="text-xl font-semibold" style={{ fontFamily: "Georgia, serif", color: "var(--bark)" }}>
-                  {section.title}
-                </h2>
-                {section.description && (
-                  <p className="mt-2 text-sm leading-relaxed max-w-2xl" style={{ color: "var(--ash)" }}>
-                    {section.description}
-                  </p>
-                )}
-              </div>
-              {section.images && section.images.length > 0 && <Gallery images={section.images} />}
-              {section.documents && section.documents.length > 0 && (
-                <div className="mt-6"><DocumentList documents={section.documents} /></div>
+        {/* Named sections (concepts, current state etc.) */}
+        {hasSections && room.sections!.map((section, i) => (
+          <section key={i}>
+            <div className="mb-6 border-b pb-4" style={{ borderColor: "#ddd5c8" }}>
+              <h2 className="text-xl font-semibold" style={{ fontFamily: "Georgia, serif", color: "var(--bark)" }}>
+                {section.title}
+              </h2>
+              {section.description && (
+                <p className="mt-2 text-sm leading-relaxed max-w-2xl" style={{ color: "var(--ash)" }}>
+                  {section.description}
+                </p>
               )}
-            </section>
-          ))}
-        </div>
-      )}
+            </div>
+            {(section.images?.length ?? 0) > 0 && <Gallery images={section.images!} />}
+            {(section.documents?.length ?? 0) > 0 && (
+              <div className="mt-6"><DocumentList documents={section.documents!} /></div>
+            )}
+          </section>
+        ))}
+
+        {/* To Do list */}
+        {hasTodos && (
+          <div>
+            <SectionHeading title="To Do" />
+            <TodoList todos={room.todos!} />
+          </div>
+        )}
+
+        {/* Materials */}
+        {hasMaterials && (
+          <div>
+            <SectionHeading title="Materials & Finishes" />
+            <MaterialsList materials={room.materials!} />
+          </div>
+        )}
+
+        {/* Product links */}
+        {hasLinks && (
+          <div>
+            <SectionHeading title="Product Links" />
+            <LinksList links={room.links!} />
+          </div>
+        )}
+
+        {/* Documents */}
+        {hasDocuments && (
+          <div>
+            <SectionHeading title="Documents & Plans" />
+            <DocumentList documents={room.documents!} />
+          </div>
+        )}
+      </div>
 
       {/* Prev / Next */}
       <div className="mt-14 pt-8 border-t flex justify-between" style={{ borderColor: "#ddd5c8" }}>

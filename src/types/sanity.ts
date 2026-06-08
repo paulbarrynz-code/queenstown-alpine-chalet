@@ -19,6 +19,27 @@ export type SanitySection = {
   documents?: SanityDocument[];
 };
 
+export type SanityTodo = {
+  text: string;
+  completed?: boolean;
+};
+
+export type SanityMaterial = {
+  name: string;
+  supplier?: string;
+  finish?: string;
+  notes?: string;
+  url?: string;
+};
+
+export type SanityLink = {
+  title: string;
+  url: string;
+  supplier?: string;
+  price?: string;
+  notes?: string;
+};
+
 export type SanityRoom = {
   _id: string;
   title: string;
@@ -29,4 +50,7 @@ export type SanityRoom = {
   images?: SanityRoomImage[];
   documents?: SanityDocument[];
   sections?: SanitySection[];
+  todos?: SanityTodo[];
+  materials?: SanityMaterial[];
+  links?: SanityLink[];
 };

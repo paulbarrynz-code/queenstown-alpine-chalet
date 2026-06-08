@@ -121,6 +121,75 @@ export const roomType = defineType({
         }),
       ],
     }),
+    defineField({
+      name: "todos",
+      title: "To Do List",
+      description: "Tasks and action items for this room",
+      type: "array",
+      of: [
+        defineField({
+          name: "todoItem",
+          title: "To Do Item",
+          type: "object",
+          fields: [
+            defineField({ name: "text", title: "Task", type: "string", validation: (r) => r.required() }),
+            defineField({ name: "completed", title: "Completed", type: "boolean", initialValue: false }),
+          ],
+          preview: {
+            select: { title: "text", subtitle: "completed" },
+            prepare({ title, subtitle }: { title?: string; subtitle?: boolean }) {
+              return { title: `${subtitle ? "✓" : "○"} ${title ?? ""}` };
+            },
+          },
+        }),
+      ],
+    }),
+    defineField({
+      name: "materials",
+      title: "Materials",
+      description: "Materials, finishes and products selected for this room",
+      type: "array",
+      of: [
+        defineField({
+          name: "materialItem",
+          title: "Material",
+          type: "object",
+          fields: [
+            defineField({ name: "name", title: "Name", type: "string", validation: (r) => r.required() }),
+            defineField({ name: "supplier", title: "Supplier", type: "string" }),
+            defineField({ name: "finish", title: "Finish / Colour", type: "string" }),
+            defineField({ name: "notes", title: "Notes", type: "text", rows: 2 }),
+            defineField({ name: "url", title: "Product URL", type: "url" }),
+          ],
+          preview: {
+            select: { title: "name", subtitle: "supplier" },
+          },
+        }),
+      ],
+    }),
+    defineField({
+      name: "links",
+      title: "Product Links",
+      description: "Links to products, suppliers or inspiration",
+      type: "array",
+      of: [
+        defineField({
+          name: "linkItem",
+          title: "Link",
+          type: "object",
+          fields: [
+            defineField({ name: "title", title: "Title", type: "string", validation: (r) => r.required() }),
+            defineField({ name: "url", title: "URL", type: "url", validation: (r) => r.required() }),
+            defineField({ name: "supplier", title: "Supplier / Store", type: "string" }),
+            defineField({ name: "price", title: "Price", type: "string" }),
+            defineField({ name: "notes", title: "Notes", type: "string" }),
+          ],
+          preview: {
+            select: { title: "title", subtitle: "supplier" },
+          },
+        }),
+      ],
+    }),
   ],
   orderings: [{ title: "Display Order", name: "orderAsc", by: [{ field: "order", direction: "asc" }] }],
   preview: { select: { title: "title" } },
