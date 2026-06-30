@@ -3,36 +3,41 @@
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import type { SanityRoom } from "@/types/sanity";
+import { navConfig } from "@/data/navConfig";
 
 type NavGroup = { label: string; rooms: SanityRoom[] };
 type NavItem = { type: "room"; room: SanityRoom } | { type: "group"; group: NavGroup };
 
 function buildNav(rooms: SanityRoom[]): NavItem[] {
-  const items: NavItem[] = [];
-  const groups = new Map<string, SanityRoom[]>();
+  const bySlug = new Map(rooms.map((r) => [r.slug, r]));
+  const usedSlugs = new Set<string>();
+  const result: NavItem[] = [];
 
-  for (const room of rooms) {
-    if (room.navGroup) {
-      if (!groups.has(room.navGroup)) groups.set(room.navGroup, []);
-      groups.get(room.navGroup)!.push(room);
+  for (const item of navConfig) {
+    if (item.type === "room") {
+      const room = bySlug.get(item.slug);
+      if (room) {
+        result.push({ type: "room", room });
+        usedSlugs.add(item.slug);
+      }
     } else {
-      items.push({ type: "room", room });
+      const groupRooms = item.items
+        .map((i) => bySlug.get(i.slug))
+        .filter((r): r is SanityRoom => r !== undefined);
+      item.items.forEach((i) => usedSlugs.add(i.slug));
+      if (groupRooms.length > 0) {
+        result.push({ type: "group", group: { label: item.label, rooms: groupRooms } });
+      }
     }
   }
 
-  // Insert each group at the position of its first member in the original order
-  const result: NavItem[] = [];
-  const seenGroups = new Set<string>();
+  // Append rooms not listed in navConfig, in their Sanity display order
   for (const room of rooms) {
-    if (room.navGroup) {
-      if (!seenGroups.has(room.navGroup)) {
-        seenGroups.add(room.navGroup);
-        result.push({ type: "group", group: { label: room.navGroup, rooms: groups.get(room.navGroup)! } });
-      }
-    } else {
+    if (!usedSlugs.has(room.slug)) {
       result.push({ type: "room", room });
     }
   }
+
   return result;
 }
 
