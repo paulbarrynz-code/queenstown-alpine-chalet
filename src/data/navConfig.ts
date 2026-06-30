@@ -21,6 +21,17 @@ export const navConfig: NavConfigItem[] = [
   },
   {
     type: "group",
+    label: "Design Artefacts",
+    items: [
+      { type: "room", slug: "architect" },
+      { type: "room", slug: "surveyor" },
+      { type: "room", slug: "planner" },
+      { type: "room", slug: "council" },
+      { type: "room", slug: "joinery" },
+    ],
+  },
+  {
+    type: "group",
     label: "Outdoor",
     items: [
       { type: "room", slug: "outdoor" },
