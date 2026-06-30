@@ -7,12 +7,18 @@ export type NavConfigGroup = { type: "group"; label: string; items: NavConfigRoo
 export type NavConfigItem = NavConfigRoom | NavConfigGroup;
 
 export const navConfig: NavConfigItem[] = [
-  { type: "room", slug: "lounge" },
-  { type: "room", slug: "kitchen" },
-  { type: "room", slug: "master-bedroom" },
-  { type: "room", slug: "rumpus" },
-  { type: "room", slug: "bedroom-3" },
-  { type: "room", slug: "bathroom" },
+  {
+    type: "group",
+    label: "Indoor",
+    items: [
+      { type: "room", slug: "lounge" },
+      { type: "room", slug: "bathroom" },
+      { type: "room", slug: "rumpus" },
+      { type: "room", slug: "bedroom-3" },
+      { type: "room", slug: "kitchen" },
+      { type: "room", slug: "master-bedroom" },
+    ],
+  },
   {
     type: "group",
     label: "Outdoor",
